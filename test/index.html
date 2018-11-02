@@ -1,0 +1,26 @@
+<script>
+var socket = new WebSocket('ws://localhost:8080/ws/def');
+
+var handlers = {
+    'sum': function(number){
+        console.log(number);
+    },
+    '/hello': function(){
+        for(var i = 0; i < 20; i++){
+            socket.send(JSON.stringify({to: 'session-number', body: i}));
+        }
+        setTimeout(function(){
+            socket.send('{\"to\":\"session-numbers-sum\"}');
+        }, 200);
+    }
+};
+
+socket.addEventListener('message', function (event) {
+    var obj     = JSON.parse(event.data);
+    var handler = handlers[obj.to];
+    if(handler !== undefined){
+        handler(obj.body);
+    }
+});
+
+</script>
